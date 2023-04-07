@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TimeCapsuleBackend.Data.DTOs;
 using TimeCapsuleBackend.Data.Models;
 using TimeCapsuleBackend.Data.Repository.IRepository;
 
@@ -13,55 +15,68 @@ namespace TimeCapsuleBackend.Controllers
     public class UserController : ControllerBase
     {
         public readonly IUserRepository _userRepository;
-        public UserController(IUserRepository userRepository)
+        private readonly IMapper _mapper;
+
+        public UserController(IUserRepository userRepository,IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
 
         // GET: api/users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             var users = await _userRepository.GetAllAsync();
-            return Ok(users);
+            
+            var usersDTO = _mapper.Map<IEnumerable<UserDTO>>(users);
+            
+            return Ok(usersDTO);
         }
 
         // GET api/users/5
         [HttpGet("{userId}")]
-        public async Task<ActionResult<User>>GetUserById(int userId)
+        public async Task<ActionResult<UserDTO>>GetUserById(int userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
                 return NotFound();
             }
-            return Ok(user);
+            var userDTO = _mapper.Map<UserDTO>(user);
+
+            return Ok(userDTO);
         }
 
         // POST api/users
         [HttpPost]
-        public async Task<IActionResult> Post(/*[FromBody]*/ User user)
+        public async Task<IActionResult> Post(/*[FromBody]*/ UserDTO userDTO)
         {
+
+            var user = _mapper.Map<User>(userDTO);
+
             await _userRepository.InsertAsync(user);
             return CreatedAtAction(nameof(GetUserById), new { userId = user.Id }, user);
         }
 
         // PUT api/users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult>  Update(int userId, /*[FromBody] */User user)
+        [HttpPut("{userId}")]
+        public async Task<IActionResult>  Update(int userId, UserDTO userDTO)
         {
-            if (userId != user.Id)
+            var userdb = await _userRepository.GetByIdAsync(userId);
+            if (userdb == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
+            var user = _mapper.Map<UserDTO, User>(userDTO, userdb);
+            user.Id = userId;
             await _userRepository.UpdateAsync(user);
             return NoContent();
         }
 
         // DELETE api/users/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{userId}")]
         public async Task<IActionResult> Delete(int userId)
         {
             await _userRepository.DeleteAsync(userId);

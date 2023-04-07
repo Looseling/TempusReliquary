@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using TimeCapsuleBackend.Data.Models;
 using TimeCapsuleBackend.Data.Repository;
 using TimeCapsuleBackend.Data.Repository.IRepository;
+using TimeCapsuleBackend.Helper;
 
 namespace TimeCapsuleBackend
 {
@@ -44,6 +45,8 @@ namespace TimeCapsuleBackend
             {
                 options.UseSqlServer(Configuration.GetConnectionString("TimeCapsuleDB"));
             });
+
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
             services.AddScoped<IUserRepository, UserRepository>();
         }

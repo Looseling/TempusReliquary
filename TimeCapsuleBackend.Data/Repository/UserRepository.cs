@@ -36,16 +36,13 @@ namespace TimeCapsuleBackend.Data.Repository
 
         public async Task<User> GetByIdAsync(int UserId)
         {
-            var user = await _dbContext.Users.FindAsync(UserId);
-            if (user != null)
-            {
-                return user;
-            }
-            return null;
+            return await _dbContext.Users.FindAsync(UserId);
         }
 
         public async Task InsertAsync(User user)
         {
+            user.CreatedAt = DateTime.Now;
+            user.UpdatedAt = DateTime.Now;
             _dbContext.Users.Add(user);
             await SaveAsync();
 
@@ -58,7 +55,8 @@ namespace TimeCapsuleBackend.Data.Repository
 
         public async Task UpdateAsync(User user)
         {
-            _dbContext.Entry(user).State = EntityState.Modified;
+            user.UpdatedAt = DateTime.Now;
+            _dbContext.Users.Update(user);
             await SaveAsync();
         }
     }
