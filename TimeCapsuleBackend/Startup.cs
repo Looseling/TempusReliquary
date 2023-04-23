@@ -49,6 +49,10 @@ namespace TimeCapsuleBackend
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICollaboratorRepository, CollaboratorRepository>();
+            services.AddScoped<ITimeCapsuleRepository, TimeCapsuleRepository>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
