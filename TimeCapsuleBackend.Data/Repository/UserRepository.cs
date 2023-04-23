@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using TimeCapsuleBackend.Data.Models;
@@ -58,6 +59,26 @@ namespace TimeCapsuleBackend.Data.Repository
             user.UpdatedAt = DateTime.Now;
             _dbContext.Users.Update(user);
             await SaveAsync();
+        }
+
+        public async Task<bool> UserExistsAsync(string email)
+        {
+            return await _dbContext.Users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<User> RandomUser()
+        {
+            var users = await _dbContext.Users.ToListAsync();
+            Random random = new Random();
+            int index = random.Next(users.Count);
+            return users[index];
+        }
+
+        public async Task<User> UserWithMostTimeCapsules()
+        {
+            var users = await _dbContext.Users.ToListAsync();
+            var user = users.OrderByDescending(u => u.TimeCapsules.Count).FirstOrDefault();
+            return user;
         }
     }
 }
