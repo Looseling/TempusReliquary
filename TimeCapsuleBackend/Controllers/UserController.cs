@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using TimeCapsuleBackend.Data.Repository.IRepository;
 
 namespace TimeCapsuleBackend.Controllers
 {
+    [EnableCors]
     [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
