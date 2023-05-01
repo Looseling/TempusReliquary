@@ -57,7 +57,6 @@ namespace TimeCapsuleBackend.Controllers
         {
 
           var timeCapsule = _mapper.Map<TimeCapsule>(timeCapsuleDTO);
-          timeCapsule.User = await _userRepository.GetByIdAsync(timeCapsule.UserId);
 
             await _TimeCapsuleRepository.InsertAsync(timeCapsule);
             return Ok();

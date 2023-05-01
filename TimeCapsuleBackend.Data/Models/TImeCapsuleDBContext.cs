@@ -74,13 +74,6 @@ namespace TimeCapsuleBackend.Data.Models
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.TimeCapsules)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_Time_Capsule_Users");
             });
 
             modelBuilder.Entity<TimeCapsuleContent>(entity =>

@@ -41,11 +41,10 @@ namespace TimeCapsuleBackend.Data.Repository
 
         public async Task InsertAsync(TimeCapsuleContent TimeCapsuleContent)
         {
-            TimeCapsuleContent.CreatedAt = DateTime.Now;
-            TimeCapsuleContent.UpdatedAt = DateTime.Now;
-            _dbContext.TimeCapsuleContents.Add(TimeCapsuleContent);
-            await SaveAsync();
-
+            //TimeCapsuleContent. = DateTime.Now;
+            //TimeCapsuleContent.UpdatedAt = DateTime.Now;
+            //_dbContext.TimeCapsuleContents.Add(TimeCapsuleContent);
+            //await SaveAsync();
         }
 
         public async Task SaveAsync()
@@ -55,9 +54,14 @@ namespace TimeCapsuleBackend.Data.Repository
 
         public async Task UpdateAsync(TimeCapsuleContent TimeCapsuleContent)
         {
-            TimeCapsuleContent.UpdatedAt = DateTime.Now;
-            _dbContext.TimeCapsuleContents.Update(TimeCapsuleContent);
-            await SaveAsync();
+            //TimeCapsuleContent.UpdatedAt = DateTime.Now;
+            //_dbContext.TimeCapsuleContents.Update(TimeCapsuleContent);
+            //await SaveAsync();
+        }
+
+        Task<User> ITimeCapsuleContentRepository.GetByIdAsync(int UserId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

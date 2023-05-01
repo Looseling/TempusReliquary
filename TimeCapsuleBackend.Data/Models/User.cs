@@ -10,7 +10,6 @@ namespace TimeCapsuleBackend.Data.Models
         public User()
         {
             Collaborators = new HashSet<Collaborator>();
-            TimeCapsules = new HashSet<TimeCapsule>();
         }
 
         public int Id { get; set; }
@@ -21,6 +20,5 @@ namespace TimeCapsuleBackend.Data.Models
         public string Password { get; set; }
 
         public virtual ICollection<Collaborator> Collaborators { get; set; }
-        public virtual ICollection<TimeCapsule> TimeCapsules { get; set; }
     }
 }

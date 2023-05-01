@@ -73,12 +73,5 @@ namespace TimeCapsuleBackend.Data.Repository
             int index = random.Next(users.Count);
             return users[index];
         }
-
-        public async Task<User> UserWithMostTimeCapsules()
-        {
-            var users = await _dbContext.Users.ToListAsync();
-            var user = users.OrderByDescending(u => u.TimeCapsules.Count).FirstOrDefault();
-            return user;
-        }
     }
 }

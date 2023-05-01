@@ -7,7 +7,7 @@ using TimeCapsuleBackend.Data.Models;
 
 namespace TimeCapsuleBackend.Data.Repository.IRepository
 {
-    public interface TimeCContentRepository
+    public interface ITimeCapsuleContentRepository
     {
         Task<IEnumerable<TimeCapsuleContent>> GetAllAsync();
         Task<User>GetByIdAsync(int UserId);
