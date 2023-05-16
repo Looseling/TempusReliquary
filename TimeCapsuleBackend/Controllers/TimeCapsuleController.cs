@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using TimeCapsuleBackend.Data.Repository.IRepository;
 
 namespace TimeCapsuleBackend.Controllers
 {
+    [EnableCors]
     [Route("api/timecapsules")]
     [ApiController]
     public class TimeCapsuleController : ControllerBase
@@ -53,7 +55,7 @@ namespace TimeCapsuleBackend.Controllers
 
         // POST api/timecapsules
         [HttpPost]
-        public async Task<IActionResult> Post(/*[FromBody]*/ TimeCapsuleDTO timeCapsuleDTO)
+        public async Task<IActionResult> Post( TimeCapsuleDTO timeCapsuleDTO)
         {
 
           var timeCapsule = _mapper.Map<TimeCapsule>(timeCapsuleDTO);
