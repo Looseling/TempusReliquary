@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Backend",
+    "\\Backend\\TimeCapsuleBackend",
+    "\\Backend\\TimeCapsuleBackend\\Controllers",
+    "\\Backend\\TimeCapsuleBackend\\Helper",
+    "\\Backend\\TimeCapsuleBackend\\Properties"
+  ],
+  "SelectedNode": "\\Backend\\TimeCapsuleBackend.sln",
+  "PreviewInSolutionExplorer": false
+}
