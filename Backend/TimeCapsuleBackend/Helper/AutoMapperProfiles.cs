@@ -15,12 +15,15 @@ namespace TimeCapsuleBackend.Helper
         {
             CreateMap<User, UserDTO>();
             CreateMap<UserDTO,User>();
+
             CreateMap<CollaboratorDTO, Collaborator>();
             CreateMap<Collaborator, CollaboratorDTO>();
+            
             CreateMap<TimeCapsule, TimeCapsuleDTO>();
             CreateMap<TimeCapsuleDTO, TimeCapsule>();
-
-
+            
+            CreateMap<TCContentDTO, TimeCapsuleContent>();
+            CreateMap<TimeCapsuleContent, TCContentDTO>();
 
         }
     }

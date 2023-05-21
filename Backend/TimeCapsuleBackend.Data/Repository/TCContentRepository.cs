@@ -9,11 +9,11 @@ using TimeCapsuleBackend.Data.Repository.IRepository;
 
 namespace TimeCapsuleBackend.Data.Repository
 {
-    public class TimeCapsuleContentRepository : ITimeCapsuleContentRepository
+    public class TCContentRepository : ITCContentRepository
     {
         private readonly TImeCapsuleDBContext _dbContext;
         
-        public TimeCapsuleContentRepository(TImeCapsuleDBContext dbContext)
+        public TCContentRepository(TImeCapsuleDBContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -59,7 +59,7 @@ namespace TimeCapsuleBackend.Data.Repository
             //await SaveAsync();
         }
 
-        Task<User> ITimeCapsuleContentRepository.GetByIdAsync(int UserId)
+        Task<User> ITCContentRepository.GetByIdAsync(int UserId)
         {
             throw new NotImplementedException();
         }

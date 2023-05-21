@@ -24,7 +24,7 @@ namespace TimeCapsuleBackend.Controllers
         {
             _TimeCapsuleRepository = TimeCapsuleRepository;
             _mapper = mapper;
-            _userRepository = userRepository;
+            _userRepository = userRepository;   
         }
 
 
