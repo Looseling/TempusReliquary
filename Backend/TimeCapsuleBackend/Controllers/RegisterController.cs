@@ -1,45 +1,69 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
+using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using TimeCapsuleBackend.Data.DTOs;
 using TimeCapsuleBackend.Data.Models;
 using TimeCapsuleBackend.Data.Repository.IRepository;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace TimeCapsuleBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class RegisterController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly IUserRepository _userRepository;
 
-        public LoginController(IConfiguration configuration, IUserRepository userRepository)
+        private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
+        private readonly IConfiguration _configuration;
+
+        public RegisterController(IMapper mapper, IUserRepository userRepository, IConfiguration configuration)
         {
-            _configuration = configuration;
+            _mapper = mapper;
             _userRepository = userRepository;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody] UserDTO login)
+        public async Task<IActionResult> RegisterAsync([FromBody] UserDTO userDto)
         {
-            var user = await AuthenticateUser(login);
+            // Validate registration data
+            var user = _mapper.Map<User>(userDto);
+
+            var UserNotAuthenticated = await AuthenticateUserAsync(user);
+
+            if (UserNotAuthenticated == false)
+            {
+                return NotFound("User Exists");
+            }
+
+            // Generate a JWT token for the registered user
+            var tokenString = GenerateJSONWebToken(user);
+
+            // Return the token in the response
+            return Ok(new { token = tokenString });
+        }
+
+        private async Task<bool> AuthenticateUserAsync(User userModel)
+        {
+            var user = await _userRepository.GetByEmail(userModel.Email);
+
             if (user != null)
             {
-                var tokenString = GenerateJSONWebToken(user);
-                return Ok(new { token = tokenString });
+                return false;
             }
-            return NotFound("User not found");
+            await _userRepository.InsertAsync(userModel);
+            return true;
+
         }
 
         private string GenerateJSONWebToken(User user)
@@ -62,17 +86,6 @@ namespace TimeCapsuleBackend.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-
-        private async Task<User> AuthenticateUser(UserDTO login)
-        {
-            var currentUser = await _userRepository.GetByEmail(login.Email);
-
-            if (currentUser != null)
-            {
-                return currentUser;
-            }
-            return null;
-        }
 
     }
 }

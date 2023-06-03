@@ -8,6 +8,8 @@ using TimeCapsuleBackend.Data.DTOs;
 using TimeCapsuleBackend.Data.Models;
 using TimeCapsuleBackend.Data.Repository;
 using TimeCapsuleBackend.Data.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
+using TimeCapsuleBackend.Helper;
 
 namespace TimeCapsuleBackend.Controllers
 {
@@ -29,11 +31,17 @@ namespace TimeCapsuleBackend.Controllers
 
         // GET: api/content
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TCContentDTO>>> GetContent()
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetContent(string timeCapsuleId)
         {
-            var tcContents = await _tcContentRepository.GetAllAsync();
-            var tcContentDTOs = _mapper.Map<IEnumerable<TCContentDTO>>(tcContents);
-            return Ok(tcContentDTOs);
+            //var tcContents = await _tcContentRepository.GetAllAsync();
+            //var tcContentDTOs = _mapper.Map<IEnumerable<TCContentDTO>>(tcContents);
+
+            //prepare needed variables
+            string currentUser = HelperFunctions.GetCurrentUser(HttpContext).Username.ToString();
+            var fileList = await _blobService.ListBlobsAsync(currentUser, timeCapsuleId);
+            
+            return Ok(fileList);
         }
 
         //GET: api/content/5
@@ -51,14 +59,19 @@ namespace TimeCapsuleBackend.Controllers
 
         // POST api/content
         [HttpPost]
+        [Authorize]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Post( IFormFile file, [FromForm] TCContentDTO tcContentDTO)
         {
             var tcContent = _mapper.Map<TimeCapsuleContent>(tcContentDTO);
             //Insert to db
             await _tcContentRepository.InsertAsync(tcContent);
+            //prepare needed variables
+            string timeCapsuleIdString = tcContent.TimeCapsuleId.ToString();
+            string currentUser = HelperFunctions.GetCurrentUser(HttpContext).Username.ToString();
+
             //upload file to blob storage
-            await _blobService.UploadContentBlobAsync(file, file.FileName,"testUser");
+            await _blobService.UploadContentBlobAsync(file, file.FileName,timeCapsuleIdString, currentUser);
             return Ok("success");
         }
     }

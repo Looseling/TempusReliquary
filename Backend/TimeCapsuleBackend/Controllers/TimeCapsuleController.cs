@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TimeCapsuleBackend.Data.DTOs;
 using TimeCapsuleBackend.Data.Models;
 using TimeCapsuleBackend.Data.Repository.IRepository;
+using TimeCapsuleBackend.Helper;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,13 +33,19 @@ namespace TimeCapsuleBackend.Controllers
 
         // GET: api/timecapsules
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<TimeCapsuleDTO>>> GetTimeCapsules()
         {
-            var TimeCapsules = await _TimeCapsuleRepository.GetAllAsync();
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from token
 
-            var TimeCapsulesDTO = _mapper.Map<IEnumerable<TimeCapsuleDTO>>(TimeCapsules);
+            var TimeCapsules = await _TimeCapsuleRepository.GetByUserId(int.Parse(userId)); // Get time capsules for this user
+            if (TimeCapsules != null)
+            {
+                var TimeCapsulesDTO = _mapper.Map<IEnumerable<TimeCapsuleDTO>>(TimeCapsules);
+                return Ok(TimeCapsulesDTO);
+            }
+            return NotFound();
 
-            return Ok(TimeCapsulesDTO);
         }
 
         // GET api/timecapsules/5
@@ -55,12 +64,19 @@ namespace TimeCapsuleBackend.Controllers
 
         // POST api/timecapsules
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post( TimeCapsuleDTO timeCapsuleDTO)
         {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from token
+            var timeCapsule = _mapper.Map<TimeCapsule>(timeCapsuleDTO);
 
-          var timeCapsule = _mapper.Map<TimeCapsule>(timeCapsuleDTO);
 
-            await _TimeCapsuleRepository.InsertAsync(timeCapsule);
+
+            await _TimeCapsuleRepository.InsertAsync(timeCapsule, int.Parse(userId));
+            var currentUser = HelperFunctions.GetCurrentUser(HttpContext);
+
+
+
             return Ok();
         }
 
