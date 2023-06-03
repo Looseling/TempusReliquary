@@ -2,7 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\Backend",
+    "\\Backend\\BussinessLogic",
+    "\\Backend\\BussinessLogic\\Services",
     "\\Backend\\TimeCapsuleBackend",
+    "\\Backend\\TimeCapsuleBackend.Data",
     "\\Backend\\TimeCapsuleBackend\\Controllers",
     "\\Backend\\TimeCapsuleBackend\\Helper",
     "\\Backend\\TimeCapsuleBackend\\Properties"
