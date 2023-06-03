@@ -11,6 +11,7 @@ namespace TimeCapsuleBackend.Data.Repository.IRepository
     {
         Task<IEnumerable<Collaborator>> GetAllAsync();
         Task<Collaborator> GetByIdAsync(int UserId);
+        Task<IEnumerable<Collaborator>> GetByUserIdAsync(int UserId);
         Task InsertAsync(Collaborator collaborator);
         Task UpdateAsync(Collaborator collaborator);
         Task DeleteAsync(int CollaboratorId);

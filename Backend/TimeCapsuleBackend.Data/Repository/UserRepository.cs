@@ -73,5 +73,11 @@ namespace TimeCapsuleBackend.Data.Repository
             int index = random.Next(users.Count);
             return users[index];
         }
+
+        public async Task<User> GetByEmail(string email)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync( o => o.Email == email);
+            return user == null ? null : user;
+        }
     }
 }

@@ -39,6 +39,12 @@ namespace TimeCapsuleBackend.Data.Repository
 
         }
 
+        public async Task<IEnumerable<Collaborator>> GetByUserIdAsync(int UserId)
+        {
+            var collaborators = await _dbContext.Collaborators.Where(c => c.UserId == UserId).ToListAsync();
+            return collaborators;
+        }
+
         public async Task InsertAsync(Collaborator collaborator)
         {
             _dbContext.Collaborators.Add(collaborator);
@@ -55,5 +61,7 @@ namespace TimeCapsuleBackend.Data.Repository
             _dbContext.Collaborators.Update(collaborator);
             await SaveAsync();
         }
+
+      
     }
 }

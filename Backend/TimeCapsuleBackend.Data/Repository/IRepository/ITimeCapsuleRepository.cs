@@ -11,7 +11,8 @@ namespace TimeCapsuleBackend.Data.Repository.IRepository
     {
         Task<IEnumerable<TimeCapsule>> GetAllAsync();
         Task<TimeCapsule> GetByIdAsync(int TimeCapsuleId);
-        Task InsertAsync(TimeCapsule TimeCapsule);
+        Task<IEnumerable<TimeCapsule>> GetByUserId(int userId);
+        Task InsertAsync(TimeCapsule TimeCapsule, int userId);
         Task UpdateAsync(TimeCapsule TimeCapsule);
         Task DeleteAsync(int TimeCapsuleId);
         Task SaveAsync();

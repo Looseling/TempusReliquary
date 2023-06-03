@@ -15,5 +15,6 @@ namespace TimeCapsuleBackend.Data.Repository.IRepository
         Task UpdateAsync(User user);
         Task DeleteAsync(int UserId);
         Task SaveAsync();
+        Task<User> GetByEmail(string email);
     }
 }
