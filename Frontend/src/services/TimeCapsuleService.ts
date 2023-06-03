@@ -1,13 +1,15 @@
-import http from "../utilities/http-common";
+import { apiClient } from "../utilities/http-common";
 import ITimeCapsuleModel from "../types/TimeCapsuleModel";
 import axios from "axios";
 
-const getAll = async () => {
+export const getAll = async () => {
   try {
-    const response = await http.get<Array<ITimeCapsuleModel>>("/timecapsules");
+    const token = localStorage.getItem("token");
+    const response = await apiClient.get("/timecapsules", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response;
   } catch (error) {
-    // Handle error
     console.error("Error getting time capsules:", error);
     throw error;
   }
@@ -15,7 +17,9 @@ const getAll = async () => {
 
 const getById = async (id: any) => {
   try {
-    const response = await http.get<ITimeCapsuleModel>(`/timecapsules/${id}`);
+    const response = await apiClient.get<ITimeCapsuleModel>(
+      `/timecapsules/${id}`
+    );
     return response;
   } catch (error) {
     // Handle error
@@ -24,15 +28,14 @@ const getById = async (id: any) => {
   }
 };
 
-const create = async (data: ITimeCapsuleModel) => {
+export const create = async (data: ITimeCapsuleModel) => {
   try {
-    const response = await axios.post(
-      "https://localhost:44312/api/timecapsules",
-      data
-    );
+    const token = localStorage.getItem("token");
+    const response = await apiClient.post("/timecapsules", data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
-    // Handle error
     console.error("Error creating time capsule:", error);
     throw error;
   }
@@ -40,7 +43,7 @@ const create = async (data: ITimeCapsuleModel) => {
 
 const update = async (id: any, data: ITimeCapsuleModel) => {
   try {
-    const response = await http.put<ITimeCapsuleModel>(
+    const response = await apiClient.put<ITimeCapsuleModel>(
       `/timecapsules/${id}`,
       data
     );
@@ -54,7 +57,7 @@ const update = async (id: any, data: ITimeCapsuleModel) => {
 
 const remove = async (id: any) => {
   try {
-    const response = await http.delete<ITimeCapsuleModel>(
+    const response = await apiClient.delete<ITimeCapsuleModel>(
       `/timecapsules/${id}`
     );
     return response.data;
