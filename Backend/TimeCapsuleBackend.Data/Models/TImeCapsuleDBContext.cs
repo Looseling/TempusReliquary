@@ -62,6 +62,8 @@ namespace TimeCapsuleBackend.Data.Models
 
                 entity.Property(e => e.Description).HasColumnName("description");
 
+                entity.Property(e => e.IsUploaded).HasColumnName("isUploaded");
+
                 entity.Property(e => e.OpeningDate)
                     .HasColumnType("datetime")
                     .HasColumnName("opening_date");
@@ -74,6 +76,8 @@ namespace TimeCapsuleBackend.Data.Models
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
+
+                entity.Property(e => e.Veiws).HasColumnName("veiws");
             });
 
             modelBuilder.Entity<TimeCapsuleContent>(entity =>
