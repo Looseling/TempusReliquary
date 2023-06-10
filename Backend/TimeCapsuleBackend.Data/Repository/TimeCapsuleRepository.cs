@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +13,15 @@ namespace TimeCapsuleBackend.Data.Repository
 {
     public class TimeCapsuleRepository : ITimeCapsuleRepository
     {
+        private readonly IDistributedCache _cache;
         private readonly TImeCapsuleDBContext _dbContext;
         private readonly ICollaboratorRepository _collaboratorRepository;
 
-        public TimeCapsuleRepository(TImeCapsuleDBContext dbContext, ICollaboratorRepository collaboratorRepository)
+        public TimeCapsuleRepository(TImeCapsuleDBContext dbContext, ICollaboratorRepository collaboratorRepository, IDistributedCache cache)
         {
             _dbContext = dbContext;
             _collaboratorRepository = collaboratorRepository;
+            _cache = cache;
         }
 
         public async Task DeleteAsync(int TimeCapsuleId)
@@ -53,17 +57,34 @@ namespace TimeCapsuleBackend.Data.Repository
             return null;
         }
 
+        public async Task<IEnumerable<TimeCapsule>> GetMostViewedAsync()
+        {
+            string cacheKey = "MostViewedTimeCapsules";
+            string serializedData = await _cache.GetStringAsync(cacheKey);
+
+            if (serializedData == null)
+            {
+                var data = await _dbContext.TimeCapsules.OrderBy(capsule => capsule.Veiws).Take(10).ToListAsync();
+                serializedData = JsonConvert.SerializeObject(data);
+
+                await _cache.SetStringAsync(cacheKey, serializedData, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+            }
+
+            var result = JsonConvert.DeserializeObject<List<TimeCapsule>>(serializedData);
+            return result;
+        }
+
         public async Task InsertAsync(TimeCapsule TimeCapsule, int userId)
         {
-            // Set created and updated time
             TimeCapsule.CreatedAt = DateTime.Now;
             TimeCapsule.UpdatedAt = DateTime.Now;
 
-            // Insert the TimeCapsule to generate the Id
             _dbContext.TimeCapsules.Add(TimeCapsule);
             await SaveAsync();
 
-            // Associate the generated TimeCapsule Id with the Collaborator
             Collaborator collaborator = new Collaborator()
             {
                 TimeCapsuleId = TimeCapsule.Id, // Assign the generated Id

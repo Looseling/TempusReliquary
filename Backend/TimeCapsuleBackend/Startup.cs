@@ -64,6 +64,11 @@ namespace TimeCapsuleBackend
                     });
             });
             
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost:6379";
+                options.InstanceName = "SampleInstance";
+            });
 
 
             services.AddControllers();

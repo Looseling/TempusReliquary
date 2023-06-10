@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BussinessLogic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -34,14 +35,14 @@ namespace TimeCapsuleBackend.Controllers
         // GET: api/timecapsules
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<TimeCapsuleDTO>>> GetTimeCapsules()
+        public async Task<ActionResult<List<TimeCapsuleDTO>>> GetTimeCapsules()
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from token
 
             var TimeCapsules = await _TimeCapsuleRepository.GetByUserId(int.Parse(userId)); // Get time capsules for this user
             if (TimeCapsules != null)
             {
-                var TimeCapsulesDTO = _mapper.Map<IEnumerable<TimeCapsuleDTO>>(TimeCapsules);
+                var TimeCapsulesDTO = _mapper.Map<List<TimeCapsuleDTO>>(TimeCapsules);
                 return Ok(TimeCapsulesDTO);
             }
             return NotFound();
@@ -101,6 +102,19 @@ namespace TimeCapsuleBackend.Controllers
         {
             await _TimeCapsuleRepository.DeleteAsync(TimeCapsuleId);
             return NoContent();
+        }
+
+        [HttpGet("most-viewed")]
+        [Authorize]
+        public async Task<ActionResult<List<TimeCapsuleDTO>>> GetMostViewed()
+        {
+            var TimeCapsules = await _TimeCapsuleRepository.GetMostViewedAsync();
+            if (TimeCapsules != null)
+            {
+                var TimeCapsulesDTO = _mapper.Map<List<TimeCapsuleDTO>>(TimeCapsules);
+                return Ok(TimeCapsulesDTO);
+            }
+            return NotFound();
         }
     }
 }
