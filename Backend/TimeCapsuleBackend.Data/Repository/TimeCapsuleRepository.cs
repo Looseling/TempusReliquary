@@ -26,9 +26,10 @@ namespace TimeCapsuleBackend.Data.Repository
 
         public async Task DeleteAsync(int TimeCapsuleId)
         {
-            var TimeCapsule = await _dbContext.TimeCapsules.FindAsync(TimeCapsuleId);
+            var TimeCapsule = await _dbContext.TimeCapsules.Include(tm => tm.Collaborators).FirstOrDefaultAsync(tc => tc.Id == TimeCapsuleId);
             if (TimeCapsule != null)
             {
+                _dbContext.Collaborators.RemoveRange(TimeCapsule.Collaborators);
                 _dbContext.TimeCapsules.Remove(TimeCapsule);
                 await SaveAsync();
             }

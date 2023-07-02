@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import TimeCapsuleService from "../../services/TimeCapsuleService";
 import TimeCapsule from "../../pages/TimeCapsule";
@@ -18,6 +19,9 @@ const EditTimeCapsule = ({ timeCapsuleId }: EditTimeCapsuleProps) => {
   useEffect(() => {
     retrieveTimeCapsule();
   }, []);
+
+  const navigate = useNavigate();
+
   // Simulating fetching the time capsule data based on the provided ID
   const retrieveTimeCapsule = () => {
     TimeCapsuleService.getById(timeCapsuleId)
@@ -41,6 +45,13 @@ const EditTimeCapsule = ({ timeCapsuleId }: EditTimeCapsuleProps) => {
   const handleSubmit = (e: any) => {
     TimeCapsuleService.update(timeCapsuleId, timeCapsule).catch((e) => {
       console.log(e);
+    });
+  };
+
+  const handleDelete = (e: any) => {
+    e.preventDefault();
+    TimeCapsuleService.remove(timeCapsuleId).then(() => {
+      navigate("/timecapsule");
     });
   };
 
@@ -82,7 +93,15 @@ const EditTimeCapsule = ({ timeCapsuleId }: EditTimeCapsuleProps) => {
         </Form.Group>
 
         <Button variant="primary" type="submit">
-          Save Changes
+          Save
+        </Button>
+        <Button
+          className="mx-2"
+          variant="danger"
+          type="button"
+          onClick={handleDelete}
+        >
+          Delete
         </Button>
       </Form>
     </div>
