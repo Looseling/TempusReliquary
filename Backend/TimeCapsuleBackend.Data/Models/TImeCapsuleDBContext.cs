@@ -18,6 +18,7 @@ namespace TimeCapsuleBackend.Data.Models
         }
 
         public virtual DbSet<Collaborator> Collaborators { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<TimeCapsule> TimeCapsules { get; set; }
         public virtual DbSet<TimeCapsuleContent> TimeCapsuleContents { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -50,6 +51,20 @@ namespace TimeCapsuleBackend.Data.Models
                     .WithMany(p => p.Collaborators)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_Collaborators_Users");
+            });
+
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.Comment1)
+                    .HasMaxLength(50)
+                    .HasColumnName("Comment");
+
+                entity.HasOne(d => d.User)
+                    .WithMany()
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Comments_Users");
             });
 
             modelBuilder.Entity<TimeCapsule>(entity =>
