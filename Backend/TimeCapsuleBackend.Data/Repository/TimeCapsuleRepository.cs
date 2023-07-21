@@ -27,7 +27,7 @@ namespace TimeCapsuleBackend.Data.Repository
         public async Task DeleteAsync(int TimeCapsuleId)
         {
             var TimeCapsule = await _dbContext.TimeCapsules.Include(tm => tm.Collaborators).FirstOrDefaultAsync(tc => tc.Id == TimeCapsuleId);
-            if (TimeCapsule != null)
+            if (TimeCapsule != null && TimeCapsule.IsUploaded != true)
             {
                 _dbContext.Collaborators.RemoveRange(TimeCapsule.Collaborators);
                 _dbContext.TimeCapsules.Remove(TimeCapsule);
@@ -39,6 +39,11 @@ namespace TimeCapsuleBackend.Data.Repository
         {
 
             return await _dbContext.TimeCapsules.ToListAsync();
+        }
+
+        public async Task<IEnumerable<TimeCapsule>> GetAllUploaded()
+        {
+            return await _dbContext.TimeCapsules.Where(tc => tc.IsUploaded == true).ToListAsync();
         }
 
         public async Task<TimeCapsule> GetByIdAsync(int TimeCapsuleId)

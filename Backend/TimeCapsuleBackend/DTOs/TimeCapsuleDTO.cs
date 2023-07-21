@@ -14,5 +14,6 @@ namespace TimeCapsuleBackend.Data.DTOs
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime OpeningDate { get; set; }
+        public bool IsUploaded { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace TimeCapsuleBackend.Data.Repository.IRepository
     public interface ITimeCapsuleRepository
     {
         Task<IEnumerable<TimeCapsule>> GetAllAsync();
+        Task<IEnumerable<TimeCapsule>> GetAllUploaded();
         Task<TimeCapsule> GetByIdAsync(int TimeCapsuleId);
         Task<IEnumerable<TimeCapsule>> GetByUserId(int userId);
         Task InsertAsync(TimeCapsule TimeCapsule, int userId);

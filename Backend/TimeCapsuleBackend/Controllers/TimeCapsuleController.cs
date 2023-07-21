@@ -11,110 +11,113 @@ using TimeCapsuleBackend.Data.Models;
 using TimeCapsuleBackend.Data.Repository.IRepository;
 using TimeCapsuleBackend.Helper;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace TimeCapsuleBackend.Controllers
 {
-    [EnableCors]
+    [EnableCors] // Specify the CORS policy name or remove the attribute if not required
     [Route("api/timecapsules")]
     [ApiController]
     public class TimeCapsuleController : ControllerBase
     {
-        public readonly ITimeCapsuleRepository _TimeCapsuleRepository;
+        private readonly ITimeCapsuleRepository _timeCapsuleRepository;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
 
-        public TimeCapsuleController(ITimeCapsuleRepository TimeCapsuleRepository, IMapper mapper, IUserRepository userRepository)
+        public TimeCapsuleController(ITimeCapsuleRepository timeCapsuleRepository, IMapper mapper, IUserRepository userRepository)
         {
-            _TimeCapsuleRepository = TimeCapsuleRepository;
+            _timeCapsuleRepository = timeCapsuleRepository;
             _mapper = mapper;
-            _userRepository = userRepository;   
+            _userRepository = userRepository;
         }
 
+        [HttpGet("uploaded")]
+        public async Task<ActionResult<List<TimeCapsuleDTO>>> GetUploadedTimeCapsules()
+        {
+            var timeCapsules = await _timeCapsuleRepository.GetAllUploaded();
+            if (timeCapsules != null)
+            {
+                var timeCapsulesDTO = _mapper.Map<List<TimeCapsuleDTO>>(timeCapsules);
+                return Ok(timeCapsulesDTO);
+            }
+            return Ok(new List<TimeCapsuleDTO>()); // Return an empty list instead of NotFound
+        }
 
-        // GET: api/timecapsules
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<TimeCapsuleDTO>>> GetTimeCapsules()
+        public async Task<ActionResult<List<TimeCapsuleDTO>>> GetUserTimeCapsules()
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from token
-
-            var TimeCapsules = await _TimeCapsuleRepository.GetByUserId(int.Parse(userId)); // Get time capsules for this user
-            if (TimeCapsules != null)
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var timeCapsules = await _timeCapsuleRepository.GetByUserId(int.Parse(userId));
+            if (timeCapsules != null)
             {
-                var TimeCapsulesDTO = _mapper.Map<List<TimeCapsuleDTO>>(TimeCapsules);
-                return Ok(TimeCapsulesDTO);
+                var timeCapsulesDTO = _mapper.Map<List<TimeCapsuleDTO>>(timeCapsules);
+                return Ok(timeCapsulesDTO);
             }
-            return NotFound();
-
+            return Ok(new List<TimeCapsuleDTO>());
         }
 
-        // GET api/timecapsules/5
-        [HttpGet("{timecapsuleId}")]
-        public async Task<ActionResult<TimeCapsuleDTO>> GetTimeCapsuleById(int TimeCapsuleId)
+        [HttpGet("{timeCapsuleId}")]
+        public async Task<ActionResult<TimeCapsuleDTO>> GetTimeCapsuleById(int timeCapsuleId)
         {
-            var TimeCapsule = await _TimeCapsuleRepository.GetByIdAsync(TimeCapsuleId);
-            if (TimeCapsule == null)
+            var timeCapsule = await _timeCapsuleRepository.GetByIdAsync(timeCapsuleId);
+            if (timeCapsule == null)
             {
                 return NotFound();
             }
-            var TimeCapsuleDTO = _mapper.Map<TimeCapsuleDTO>(TimeCapsule);
+            var timeCapsuleDTO = _mapper.Map<TimeCapsuleDTO>(timeCapsule);
 
-            return Ok(TimeCapsuleDTO);
+            return Ok(timeCapsuleDTO);
         }
 
-        // POST api/timecapsules
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Post( TimeCapsuleDTO timeCapsuleDTO)
+        public async Task<IActionResult> Post(TimeCapsuleDTO timeCapsuleDTO)
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from token
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var timeCapsule = _mapper.Map<TimeCapsule>(timeCapsuleDTO);
 
+            await _timeCapsuleRepository.InsertAsync(timeCapsule, int.Parse(userId));
 
-
-            await _TimeCapsuleRepository.InsertAsync(timeCapsule, int.Parse(userId));
-            var currentUser = HelperFunctions.GetCurrentUser(HttpContext);
-
-
-
-            return Ok();
+            return Ok(timeCapsuleDTO); // Return the created TimeCapsuleDTO or appropriate response
         }
 
-        // PUT api/timecapsules/5
-        [HttpPut("{TimeCapsuleId}")]
-        public async Task<IActionResult> Update(int TimeCapsuleId, TimeCapsuleDTO TimeCapsuleDTO)
+        [HttpPut("{timeCapsuleId}")]
+        public async Task<IActionResult> Update(int timeCapsuleId, TimeCapsuleDTO timeCapsuleDTO)
         {
-            var TimeCapsuledb = await _TimeCapsuleRepository.GetByIdAsync(TimeCapsuleId);
-            if (TimeCapsuledb == null)
+            var timeCapsuleDb = await _timeCapsuleRepository.GetByIdAsync(timeCapsuleId);
+            if (timeCapsuleDb == null)
             {
                 return NotFound();
             }
-            var TimeCapsule = _mapper.Map<TimeCapsuleDTO, TimeCapsule>(TimeCapsuleDTO, TimeCapsuledb);
-            TimeCapsule.Id = TimeCapsuleId;
-            await _TimeCapsuleRepository.UpdateAsync(TimeCapsule);
+            else if (timeCapsuleDb.IsUploaded == true)
+            {
+                return BadRequest("Can't update uploaded TimeCapsules :/");
+            }
+            var timeCapsule = _mapper.Map(timeCapsuleDTO, timeCapsuleDb);
+            timeCapsule.Id = timeCapsuleId;
+
+            await _timeCapsuleRepository.UpdateAsync(timeCapsule);
+
             return NoContent();
         }
 
-        // DELETE api/timecapsules/5
-        [HttpDelete("{TimeCapsuleId}")]
-        public async Task<IActionResult> Delete(int TimeCapsuleId)
+        [HttpDelete("{timeCapsuleId}")]
+        public async Task<IActionResult> Delete(int timeCapsuleId)
         {
-            await _TimeCapsuleRepository.DeleteAsync(TimeCapsuleId);
+            await _timeCapsuleRepository.DeleteAsync(timeCapsuleId);
             return NoContent();
         }
 
-        [HttpGet("most-viewed")]
+        [HttpGet("mostviewed")]
         [Authorize]
         public async Task<ActionResult<List<TimeCapsuleDTO>>> GetMostViewed()
         {
-            var TimeCapsules = await _TimeCapsuleRepository.GetMostViewedAsync();
-            if (TimeCapsules != null)
+            var timeCapsules = await _timeCapsuleRepository.GetMostViewedAsync();
+            if (timeCapsules != null)
             {
-                var TimeCapsulesDTO = _mapper.Map<List<TimeCapsuleDTO>>(TimeCapsules);
-                return Ok(TimeCapsulesDTO);
+                var timeCapsulesDTO = _mapper.Map<List<TimeCapsuleDTO>>(timeCapsules);
+                return Ok(timeCapsulesDTO);
             }
-            return NotFound();
+            return Ok(new List<TimeCapsuleDTO>());
         }
     }
 }

@@ -33,7 +33,7 @@ namespace BussinessLogic.Services
 
         public async Task<IEnumerable<string>> ListBlobsAsync(string userName, string timeCapsule)
         {
-            var containerInstance = _blobServiceClient.GetBlobContainerClient("timecapsule");
+            var containerInstance = _blobServiceClient.GetBlobContainerClient("tc1container");
             var blobs = new List<string>();
             var folderPrefix = $"{userName}/{timeCapsule}/";
 
@@ -42,7 +42,7 @@ namespace BussinessLogic.Services
                 if (!blobItem.IsPrefix)
                 {
                     // Construct the URL for each blob with the SAS token.
-                    string blobUrl = GetBlobSasUrl("timecapsule", blobItem.Blob.Name);
+                    string blobUrl = GetBlobSasUrl("tc1container", blobItem.Blob.Name);
 
                     blobs.Add(blobUrl);
                 }
@@ -58,7 +58,7 @@ namespace BussinessLogic.Services
         public async Task UploadContentBlobAsync(IFormFile file, string fileName,string timeCapsuleId, string userId)
         {
             //create blob container if does not exist
-            var containerInstance = _blobServiceClient.GetBlobContainerClient("timecapsule");
+            var containerInstance = _blobServiceClient.GetBlobContainerClient("tc1container");
             var blobName = $"{userId}/{timeCapsuleId}/{fileName}";
 
             var blobInstance = containerInstance.GetBlobClient(blobName);
