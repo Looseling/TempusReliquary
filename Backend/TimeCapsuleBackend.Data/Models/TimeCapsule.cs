@@ -11,6 +11,7 @@ namespace TimeCapsuleBackend.Data.Models
         {
             Collaborators = new HashSet<Collaborator>();
             TimeCapsuleContents = new HashSet<TimeCapsuleContent>();
+            TimeCapsuleEmails = new HashSet<TimeCapsuleEmail>();
         }
 
         public int Id { get; set; }
@@ -24,5 +25,6 @@ namespace TimeCapsuleBackend.Data.Models
 
         public virtual ICollection<Collaborator> Collaborators { get; set; }
         public virtual ICollection<TimeCapsuleContent> TimeCapsuleContents { get; set; }
+        public virtual ICollection<TimeCapsuleEmail> TimeCapsuleEmails { get; set; }
     }
 }

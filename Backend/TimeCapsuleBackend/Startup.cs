@@ -1,5 +1,6 @@
     using Azure.Storage.Blobs;
-    using BussinessLogic.Services;
+using BussinessLogic.Models;
+using BussinessLogic.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -39,8 +40,9 @@
             // This method gets called by the runtime. Use this method to add services to the container.
             public void ConfigureServices(IServiceCollection services)
             {
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
 
-                services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
                     AddJwtBearer(options =>
                     {
                         options.TokenValidationParameters = new TokenValidationParameters()
@@ -110,12 +112,14 @@
 
                 services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
+                services.AddTransient<IMailService, MailService>();
+                services.AddScoped<ITimeCapsuleEmailRepository, TimeCapsuleEmailRepository>();
                 services.AddScoped<IUserRepository, UserRepository>();
                 services.AddScoped<ICollaboratorRepository, CollaboratorRepository>();
                 services.AddScoped<ITimeCapsuleRepository, TimeCapsuleRepository>();
                 services.AddScoped<ITCContentRepository, TCContentRepository>();
                 services.AddSingleton(x => new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage")));
-                services.AddSingleton<IBlobService, BlobService>();
+                services.AddTransient<IBlobService, BlobService>();
             }
 
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

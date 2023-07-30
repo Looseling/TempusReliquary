@@ -21,6 +21,7 @@ namespace TimeCapsuleBackend.Data.Models
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<TimeCapsule> TimeCapsules { get; set; }
         public virtual DbSet<TimeCapsuleContent> TimeCapsuleContents { get; set; }
+        public virtual DbSet<TimeCapsuleEmail> TimeCapsuleEmails { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -118,6 +119,23 @@ namespace TimeCapsuleBackend.Data.Models
                     .WithMany(p => p.TimeCapsuleContents)
                     .HasForeignKey(d => d.TimeCapsuleId)
                     .HasConstraintName("FK_Time_Capsule_Content_Time_Capsule");
+            });
+
+            modelBuilder.Entity<TimeCapsuleEmail>(entity =>
+            {
+                entity.ToTable("Time_Capsule_Emails");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(320)
+                    .IsUnicode(false)
+                    .HasColumnName("email");
+
+                entity.HasOne(d => d.TimeCapsule)
+                    .WithMany(p => p.TimeCapsuleEmails)
+                    .HasForeignKey(d => d.TimeCapsuleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Time_Capsule_Emails_Time_Capsule");
             });
 
             modelBuilder.Entity<User>(entity =>
