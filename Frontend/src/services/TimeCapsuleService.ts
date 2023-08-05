@@ -15,6 +15,16 @@ export const getAll = async () => {
   }
 };
 
+export const getAllUploaded = async () => {
+  try {
+    const response = await apiClient.get("/timecapsules/uploaded");
+    return response;
+  } catch (error) {
+    console.error("Error getting time capsules:", error);
+    throw error;
+  }
+};
+
 const getById = async (id: any) => {
   try {
     const response = await apiClient.get<ITimeCapsuleModel>(
@@ -55,6 +65,21 @@ const update = async (id: any, data: ITimeCapsuleModel) => {
   }
 };
 
+const upload = async (id: any, data: ITimeCapsuleModel) => {
+  try {
+    data.isUploaded = true;
+    const response = await apiClient.put<ITimeCapsuleModel>(
+      `/timecapsules/${id}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error(`Error updating time capsule with ID ${id}:`, error);
+    throw error;
+  }
+};
+
 const remove = async (id: any) => {
   try {
     const response = await apiClient.delete<ITimeCapsuleModel>(
@@ -74,6 +99,8 @@ const TimeCapsuleService = {
   create,
   update,
   remove,
+  upload,
+  getAllUploaded,
 };
 
 export default TimeCapsuleService;
