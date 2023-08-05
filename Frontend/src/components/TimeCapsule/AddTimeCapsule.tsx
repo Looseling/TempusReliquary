@@ -49,6 +49,12 @@ function AddTimeCapsule() {
     setSubmitted(false);
   };
 
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero indexed, so +1
+  const dd = String(today.getDate()).padStart(2, "0");
+
+  const minDate = `${yyyy}-${mm}-${dd}`;
   return (
     <div className="submit-form">
       {submitted ? (
@@ -59,7 +65,7 @@ function AddTimeCapsule() {
           </button>
         </div>
       ) : (
-        <div>
+        <div style={{ width: "35vh" }}>
           <div className="form-group">
             <label htmlFor="title">Title</label>
             <input
@@ -95,6 +101,7 @@ function AddTimeCapsule() {
               value={TimeCapsule.openingDate} // Set the value as a string in "YYYY-MM-DD" format
               onChange={handleInputChange}
               name="openingDate"
+              min={minDate}
             />
           </div>
 
