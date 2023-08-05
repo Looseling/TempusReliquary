@@ -7,6 +7,8 @@ import TimeCapsule from "./pages/TimeCapsule";
 import Detail from "./pages/Detail";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import ViewTimeCapsule from "./pages/ViewTimeCapsule";
+import Greeting from "./pages/Greeting";
 
 function App() {
   return (
@@ -14,7 +16,13 @@ function App() {
       <NavBar />
       <Container className="mb-4">
         <Routes>
-          <Route path="/" element={<Home />}></Route>
+          <Route path="/Public" element={<Home />}></Route>
+          <Route path="/" element={<Greeting />}></Route>
+
+          <Route
+            path="/ViewTimeCapsule/:id"
+            element={<ViewTimeCapsule />}
+          ></Route>
           <Route path="/Register" element={<Register />}></Route>
           <Route path="/Login" element={<Login />}></Route>
           <Route path="/about" element={<About />}></Route>
