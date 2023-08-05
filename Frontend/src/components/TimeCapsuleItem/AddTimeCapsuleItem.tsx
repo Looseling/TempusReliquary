@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "../../css/globalStyles.css";
 
 interface UploadFormProps {
   timeCapsuleId: string;
@@ -10,6 +11,7 @@ function AddTimeCapsuleItem({ timeCapsuleId }: UploadFormProps) {
   const [text, setText] = useState<string>("");
   const [formData, setFormData] = useState<FormData | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploaded, setUploaded] = useState<boolean>(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -40,28 +42,49 @@ function AddTimeCapsuleItem({ timeCapsuleId }: UploadFormProps) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Handle the response as needed
+      // If successful upload, set uploaded to true
+      setUploaded(true);
     } catch (error) {
       console.error(error);
     }
   };
 
+  useEffect(() => {
+    if (uploaded) {
+      // If document is uploaded successfully, clear the form fields
+      setFile(null);
+      setText("");
+
+      // Reset the uploaded state back to false
+      setUploaded(false);
+    }
+  }, [uploaded]);
+
   return (
-    <div className="border border-success">
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="file">Select a file:</label>
-          <input type="file" id="file" onChange={handleFileChange} />
-        </div>
-        <div>
-          <label htmlFor="text">Text:</label>
-          <input type="text" id="text" onChange={handleTextChange} />
-        </div>
-        <div>
-          <button className="btn btn-secondary" type="submit">
-            Upload
-          </button>
-        </div>
+    <div className="upload-container">
+      <form onSubmit={handleSubmit} className="upload-form">
+        <label htmlFor="file" className="file-input-label">
+          Select a file
+          <input
+            type="file"
+            id="file"
+            className="file-input"
+            onChange={handleFileChange}
+          />
+        </label>
+        <label htmlFor="text" className="text-input-label">
+          Add your text
+          <input
+            type="text"
+            id="text"
+            className="text-input"
+            onChange={handleTextChange}
+            value={text} // added value prop to clear input field after upload
+          />
+        </label>
+        <button className="upload-button" type="submit">
+          Upload
+        </button>
       </form>
     </div>
   );
