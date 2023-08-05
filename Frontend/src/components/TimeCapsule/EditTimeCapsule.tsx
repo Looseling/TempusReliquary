@@ -55,55 +55,83 @@ const EditTimeCapsule = ({ timeCapsuleId }: EditTimeCapsuleProps) => {
     });
   };
 
+  const handleUpload = (e: any) => {
+    e.preventDefault();
+    TimeCapsuleService.upload(timeCapsuleId, timeCapsule).then(() => {
+      navigate("/timecapsule");
+    });
+  };
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero indexed, so +1
+  const dd = String(today.getDate()).padStart(2, "0");
+
+  const minDate = `${yyyy}-${mm}-${dd}`;
+
   return (
     <div>
       <h2>Edit Time Capsule</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="title">
-          <Form.Label>Title</Form.Label>
-          <Form.Control
-            type="text"
-            required
-            value={timeCapsule.title}
-            onChange={handleInputChange}
-            name="title"
-          />
-        </Form.Group>
+      <div>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="title">
+            <Form.Label>Title</Form.Label>
+            <Form.Control
+              type="text"
+              required
+              value={timeCapsule.title}
+              onChange={handleInputChange}
+              name="title"
+            />
+          </Form.Group>
 
-        <Form.Group controlId="description">
-          <Form.Label>Description</Form.Label>
-          <Form.Control
-            type="text"
-            required
-            value={timeCapsule.description}
-            onChange={handleInputChange}
-            name="description"
-          />
-        </Form.Group>
+          <Form.Group controlId="description">
+            <Form.Label>Message to the future...</Form.Label>
+            <Form.Control
+              type="text"
+              required
+              value={timeCapsule.description}
+              onChange={handleInputChange}
+              name="description"
+              as="textarea"
+              rows={10}
+            />
+          </Form.Group>
 
-        <Form.Group controlId="openingDate">
-          <Form.Label>Opening Date</Form.Label>
-          <Form.Control
-            type="date"
-            required
-            value={timeCapsule.openingDate}
-            onChange={handleInputChange}
-            name="openingDate"
-          />
-        </Form.Group>
+          <Form.Group controlId="openingDate">
+            <Form.Label>Opening Date</Form.Label>
+            <Form.Control
+              type="date"
+              required
+              value={timeCapsule.openingDate}
+              onChange={handleInputChange}
+              name="openingDate"
+              min={minDate}
+            />
+          </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Save
-        </Button>
-        <Button
-          className="mx-2"
-          variant="danger"
-          type="button"
-          onClick={handleDelete}
-        >
-          Delete
-        </Button>
-      </Form>
+          <Button variant="primary" type="submit">
+            Save
+          </Button>
+          <Button
+            className="mx-2"
+            variant="danger"
+            type="button"
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
+
+          <Button
+            className="mx-2"
+            variant="success"
+            type="button"
+            onClick={handleUpload}
+          >
+            Upload
+          </Button>
+        </Form>
+      </div>
     </div>
   );
 };
