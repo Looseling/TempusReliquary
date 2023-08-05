@@ -17,11 +17,9 @@ const fetchData = async (timeCapsuleId: string) => {
 
 function GetTimeCapsuleItem({ timeCapsuleId }: GetTimeCapsuleItemProps) {
   const [links, setLinks] = useState([]);
-  console.log(timeCapsuleId + "----------------------");
   const fetchLinks = async () => {
     const data = await fetchData(timeCapsuleId);
     setLinks(data);
-    console.log(data + "----------------------");
   };
 
   useEffect(() => {
@@ -30,7 +28,7 @@ function GetTimeCapsuleItem({ timeCapsuleId }: GetTimeCapsuleItemProps) {
 
   return (
     <div className="border border-success">
-      <h1>Items</h1>
+      <h4>Items</h4>
       {links.map((link, index) => (
         <>
           <a key={index} href={link}>
