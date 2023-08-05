@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Form, Button, Container } from "react-bootstrap";
 import { login } from "../services/UserService";
 import { setAuthToken } from "../utilities/http-common";
-
+import { Button as Button2 } from "@material-tailwind/react/";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +15,8 @@ const Login = () => {
     try {
       const data = await login(email, password);
       localStorage.setItem("token", data.token);
+      localStorage.setItem("UserName", email);
+
       setAuthToken(data.token);
       toast.success("Login successful!", {
         position: toast.POSITION.TOP_CENTER,
@@ -26,10 +28,7 @@ const Login = () => {
   };
 
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
-    >
+    <>
       <Form style={{ width: "300px" }}>
         <h3 className="text-center mb-4">Login</h3>
         <Form.Group controlId="formBasicUsername">
@@ -54,7 +53,8 @@ const Login = () => {
           Login
         </Button>
       </Form>
-    </Container>
+      <Button2>asds</Button2>
+    </>
   );
 };
 

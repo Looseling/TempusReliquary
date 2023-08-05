@@ -1,5 +1,11 @@
+import TimeCapsuleList from "../components/TimeCapsule/TimeCapsuleList";
+
 function Home() {
-  return <div>Home</div>;
+  return (
+    <>
+      <TimeCapsuleList viewMode="public"></TimeCapsuleList>
+    </>
+  );
 }
 
 export default Home;

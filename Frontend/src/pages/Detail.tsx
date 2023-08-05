@@ -7,6 +7,8 @@ import AddTimeCapsuleItem from "../components/TimeCapsuleItem/AddTimeCapsuleItem
 import DeleteTimeCapsuleItem from "../components/TimeCapsuleItem/DeleteTimeCapsuleItem";
 import EditTimeCapsuleItem from "../components/TimeCapsuleItem/EditTimeCapsuleItem";
 import GetTimeCapsuleItem from "../components/TimeCapsuleItem/GetTimeCapsuleItem";
+import PreviewTimeCapsule from "./ViewTimeCapsule";
+import AddTimeCapsuleReceivers from "../components/TimeCapsuleItem/AddTimeCapsuleReceivers";
 
 function Detail() {
   const { id } = useParams<{ id: string }>();
@@ -14,15 +16,19 @@ function Detail() {
   const timeCapsuleId = Number(id);
   return (
     <>
-      <EditTimeCapsule timeCapsuleId={timeCapsuleId}></EditTimeCapsule>
-      <div className="m-4">
-        <AddTimeCapsuleItem
-          timeCapsuleId={timeCapsuleId.toString()}
-        ></AddTimeCapsuleItem>
-        <GetTimeCapsuleItem
-          timeCapsuleId={timeCapsuleId.toString()}
-        ></GetTimeCapsuleItem>
-        <DeleteTimeCapsuleItem></DeleteTimeCapsuleItem>
+      <div className="m-4 d-flex justify-content-between">
+        <div style={{ width: "70%" }}>
+          <EditTimeCapsule timeCapsuleId={timeCapsuleId}></EditTimeCapsule>
+          <PreviewTimeCapsule></PreviewTimeCapsule>
+        </div>
+        <div style={{ width: "30%" }}>
+          <AddTimeCapsuleItem
+            timeCapsuleId={timeCapsuleId.toString()}
+          ></AddTimeCapsuleItem>
+          <AddTimeCapsuleReceivers
+            timeCapsuleId={timeCapsuleId.toString()}
+          ></AddTimeCapsuleReceivers>
+        </div>
       </div>
     </>
   );
