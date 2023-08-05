@@ -3,4 +3,5 @@ export default interface ITimeCapsuleModel {
   title: string;
   description: string;
   openingDate: string;
+  isUploaded?: boolean;
 }
